@@ -1,0 +1,312 @@
+openapi: 3.0.3
+info:
+  title: Oracle Fusion Cloud ERP Integrations REST Service
+  description: |
+    Hand-authored OpenAPI 3.0 contract for Oracle Fusion Cloud's "erpintegrations" REST resource, used to upload FBDI files to WebCenter Content (UCM) and submit/monitor the ESS jobs that import them (uploadFileToUCM, importBulkData, submitESSJobRequest, getESSJobStatus).
+
+    There is deliberately no `servers` entry. The base URL is entirely instance-specific - https://{fusionHost}/fscmRestApi/resources/{apiVersion}, e.g. https://acme.fa.us2.oraclecloud.com/fscmRestApi/resources/11.13.18.05 - and any default would be a non-working placeholder. Callers must supply the full base URL.
+
+    Oracle does not publish a machine-readable spec for this API - this document was reconstructed from Oracle's public REST API reference documentation (docs.oracle.com .../farfa/api-erp-processes.html and .../fasop/erp-integrations-rest-service.html) and known sample payloads. Field names/requiredness should be verified against the target Fusion instance's actual release before this is used to generate a production connector.
+  version: 11.13.18.05
+security:
+- basicAuth: []
+- oauth2: []
+paths:
+  /erpintegrations:
+    get:
+      summary: Get ESS job status via finder
+      description: |
+        Simple, resource-local alternative to the generic Scheduler REST API for checking the status of a job submitted through this same resource.
+      operationId: getESSJobStatus
+      parameters:
+      - name: finder
+        in: query
+        description: |
+          Use ESSJobStatusRF;requestId={ReqstId} to check the status of a previously submitted request.
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+        example: ESSJobStatusRF;requestId=14557
+      responses:
+        "200":
+          description: Job status result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ESSJobStatusResponse'
+    post:
+      summary: "Invoke an ERP Integrations operation (upload, import, or submit)"
+      description: |
+        This is a single multiplexed endpoint. Which operation actually runs is selected via the OperationName field in the request body. loadAndImportData exists but is NOT recommended for Supply Chain Planning data because it cannot handle encrypted files - importBulkData is the encryption-capable equivalent and is preferred.
+      operationId: invokeErpIntegrationOperation
+      requestBody:
+        description: |
+          The operation request. The concrete shape is selected by the OperationName field: uploadFileToUCM, importBulkData, or submitESSJobRequest.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ErpIntegrationRequest'
+            examples:
+              uploadFileToUCM:
+                value:
+                  OperationName: uploadFileToUCM
+                  DocumentContent: UEsDBBQAAAAIABCInEgIHJSKCgAAAAgAAAAIAAAAdGVzdC50eHQ=
+                  DocumentAccount: fin$/payables$/import$
+                  ContentType: zip
+                  FileName: Test.zip
+                  DocumentId: null
+              importBulkData:
+                value:
+                  OperationName: importBulkData
+                  DocumentContent: UEsDBBQAAAAIAHSsJUWkOHOwEwEAAHgDAAAXAAAA...
+                  ContentType: zip
+                  FileName: APTEST_0310.zip
+                  DocumentAccount: fin$/payables$/import$
+                  JobName: "oracle/apps/ess/financials/payables/invoices/transactions,APXIIMPT"
+                  ParameterList: "#NULL,Vision Operations,#NULL,#NULL,#NULL,#NULL,#NULL,INVOICE\
+                    \ GATEWAY,#NULL,#NULL,#NULL,1,#NULL"
+                  CallbackURL: '#NULL'
+                  NotificationCode: "10"
+                  JobOptions: "InterfaceDetails=1,ImportOption=Y,PurgeOption=Y,ExtractFileType=ALL"
+        required: true
+      responses:
+        "200":
+          description: Operation result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErpIntegrationResponse'
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  o:errorCode:
+                    type: string
+                    x-ballerina-name: oErrorCode
+                  detail:
+                    type: string
+                  title:
+                    type: string
+components:
+  schemas:
+    ESSJobStatusResponse:
+      type: object
+      properties:
+        count:
+          type: integer
+        hasMore:
+          type: boolean
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ESSJobStatusItem'
+    SubmitESSJobRequest:
+      required:
+      - DocumentId
+      - ESSParameters
+      - JobDefName
+      - JobPackageName
+      - OperationName
+      type: object
+      properties:
+        OperationName:
+          type: string
+          enum:
+          - submitESSJobRequest
+          x-ballerina-name: operationName
+        JobPackageName:
+          type: string
+          x-ballerina-name: jobPackageName
+        ESSParameters:
+          type: string
+          description: "Comma-separated job parameters, same convention as ParameterList\
+            \ above."
+          x-ballerina-name: essParameters
+        DocumentId:
+          type: string
+          description: DocumentId returned by a prior uploadFileToUCM call.
+          x-ballerina-name: documentId
+        JobDefName:
+          type: string
+          x-ballerina-name: jobDefName
+    ErpIntegrationRequest:
+      discriminator:
+        propertyName: OperationName
+        mapping:
+          uploadFileToUCM: '#/components/schemas/UploadFileToUCMRequest'
+          importBulkData: '#/components/schemas/ImportBulkDataRequest'
+          submitESSJobRequest: '#/components/schemas/SubmitESSJobRequest'
+      oneOf:
+      - $ref: '#/components/schemas/UploadFileToUCMRequest'
+      - $ref: '#/components/schemas/ImportBulkDataRequest'
+      - $ref: '#/components/schemas/SubmitESSJobRequest'
+    UploadFileToUCMRequest:
+      required:
+      - ContentType
+      - DocumentAccount
+      - DocumentContent
+      - FileName
+      - OperationName
+      type: object
+      properties:
+        ContentType:
+          type: string
+          example: zip
+          x-ballerina-name: contentType
+        OperationName:
+          type: string
+          enum:
+          - uploadFileToUCM
+          x-ballerina-name: operationName
+        DocumentContent:
+          type: string
+          description: Base64-encoded file content (typically a zip).
+          format: byte
+          x-ballerina-name: documentContent
+        DocumentAccount:
+          type: string
+          description: |
+            UCM account/folder path, e.g. "fin$/payables$/import$" or "scm$/planningDataLoader$/import$" or "scm$/item$/import$". This value is module-specific - confirm the correct account for the target import job.
+          x-ballerina-name: documentAccount
+        FileName:
+          type: string
+          x-ballerina-name: fileName
+        DocumentId:
+          type: string
+          nullable: true
+          x-ballerina-name: documentId
+    ImportBulkDataRequest:
+      required:
+      - ContentType
+      - DocumentAccount
+      - DocumentContent
+      - FileName
+      - JobName
+      - OperationName
+      - ParameterList
+      type: object
+      properties:
+        CallbackURL:
+          type: string
+          nullable: true
+          x-ballerina-name: callbackURL
+        NotificationCode:
+          type: string
+          x-ballerina-name: notificationCode
+        ContentType:
+          type: string
+          example: zip
+          x-ballerina-name: contentType
+        OperationName:
+          type: string
+          enum:
+          - importBulkData
+          x-ballerina-name: operationName
+        DocumentContent:
+          type: string
+          format: byte
+          x-ballerina-name: documentContent
+        DocumentAccount:
+          type: string
+          x-ballerina-name: documentAccount
+        FileName:
+          type: string
+          x-ballerina-name: fileName
+        JobName:
+          type: string
+          description: |
+            Fully-qualified ESS job package/name, e.g. "oracle/apps/ess/financials/payables/invoices/transactions,APXIIMPT" for AP invoices, or the equivalent Import Items job path for PIM/Product Management.
+          x-ballerina-name: jobName
+        JobOptions:
+          type: string
+          description: |
+            Comma-separated key=value job options, e.g. "InterfaceDetails=1,ImportOption=Y,PurgeOption=Y,ExtractFileType=ALL".
+          x-ballerina-name: jobOptions
+        ParameterList:
+          type: string
+          description: |
+            Comma-separated, positional job parameters. Use "#NULL" for unused positions; exact positions/meaning are job-specific.
+          x-ballerina-name: parameterList
+    ErpIntegrationResponse:
+      type: object
+      properties:
+        RqstId:
+          type: string
+          x-ballerina-name: rqstId
+        ContentType:
+          type: string
+          x-ballerina-name: contentType
+        OperationName:
+          type: string
+          x-ballerina-name: operationName
+        DocumentAccount:
+          type: string
+          x-ballerina-name: documentAccount
+        FileName:
+          type: string
+          x-ballerina-name: fileName
+        DocumentId:
+          type: string
+          nullable: true
+          x-ballerina-name: documentId
+        JobName:
+          type: string
+          x-ballerina-name: jobName
+        ReqstId:
+          type: string
+          x-ballerina-name: reqstId
+        RequestStatus:
+          type: string
+          nullable: true
+          x-ballerina-name: requestStatus
+    ESSJobStatusItem:
+      type: object
+      properties:
+        OperationName:
+          type: string
+          x-ballerina-name: operationName
+        DocumentId:
+          type: string
+          nullable: true
+          x-ballerina-name: documentId
+        ReqstId:
+          type: string
+          x-ballerina-name: reqstId
+        RequestStatus:
+          type: string
+          description: "Observed values include SUCCEEDED, ERROR, WARNING, RUNNING\
+            \ - confirm the full set against your instance."
+          x-ballerina-name: requestStatus
+  responses:
+    BadRequest:
+      description: Invalid request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+              detail:
+                type: string
+              o:errorCode:
+                type: string
+  securitySchemes:
+    basicAuth:
+      type: http
+      description: |
+        Basic authentication over HTTPS, using the credentials of a Fusion integration user. Supported on most instances, but some are configured to reject it in favour of OAuth2.
+      scheme: basic
+    oauth2:
+      type: oauth2
+      description: |
+        OAuth2 client credentials against the instance's Oracle Identity Cloud Service (IDCS) token endpoint. The token URL is instance-specific - substitute your own IDCS host and the scope registered for the ERP Integrations resource.
+      flows:
+        clientCredentials:
+          tokenUrl: https://idcs-tenant.identity.oraclecloud.com/oauth2/v1/token
+          scopes: {}

@@ -5,12 +5,9 @@ name = "oraclefusion.erp.integrations"
 version = "@toml.version@"
 license = ["Apache-2.0"]
 authors = ["Ballerina"]
-keywords = [] # TODO: Add keywords
-# icon = "icon.png" # TODO: Add icon
+keywords = ["Type/Connector", "Vendor/Oracle", "Cost/Paid", "Area/ERP", "Oracle Fusion", "ERP", "FBDI", "ESS", "Finance & Accounting/ERP"]
+icon = "icon.png"
 repository = "https://github.com/ballerina-platform/module-ballerinax-oraclefusion.erp.integrations"
 
 [build-options]
 observabilityIncluded = true
-
-[platform.java21]
-graalvmCompatible = true
