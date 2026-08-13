@@ -2,7 +2,8 @@
 
 [![Build](https://github.com/ballerina-platform/module-ballerinax-oraclefusion.erp.integrations/actions/workflows/ci.yml/badge.svg)](https://github.com/ballerina-platform/module-ballerinax-oraclefusion.erp.integrations/actions/workflows/ci.yml)
 [![GitHub Last Commit](https://img.shields.io/github/last-commit/ballerina-platform/module-ballerinax-oraclefusion.erp.integrations.svg)](https://github.com/ballerina-platform/module-ballerinax-oraclefusion.erp.integrations/commits/master)
-[![GitHub Issues](https://img.shields.io/github/issues/ballerina-platform/ballerina-library/module/oraclefusion.erp.integrations.svg?label=Open%20Issues)](https://github.com/ballerina-platform/ballerina-library/labels/module%oraclefusion.erp.integrations)
+[![GitHub Issues](https://img.shields.io/github/issues/ballerina-platform/ballerina-library/module/oraclefusion.erp.integrations.svg?label=Open%20Issues)](https://github.com/ballerina-platform/ballerina-library/labels/module%2Foraclefusion.erp.integrations)
+
 
 ## Overview
 
@@ -18,7 +19,7 @@ The `ballerinax/oraclefusion.erp.integrations` package provides APIs to connect 
 
 The ERP Integrations base URL is instance-specific and takes the form:
 
-```
+```text
 https://{fusionHost}/fscmRestApi/resources/{apiVersion}
 ```
 
@@ -53,8 +54,6 @@ final erp:Client erpClient = check new ({
     }
 }, serviceUrl);
 ```
-
-> Always set `tokenUrl` explicitly. The generated type carries a placeholder default that will not resolve against your instance.
 
 Ask your Fusion administrator which scheme the instance is configured for — some pods disable Basic auth for integration users.
 

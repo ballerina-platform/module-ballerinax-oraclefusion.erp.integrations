@@ -31,6 +31,10 @@ configurable string password = ?;
 // template, zip them, and point this at the resulting archive.
 configurable string filePath = ?;
 
+// Business unit that owns the imported invoices. Tenant-specific — "Vision Operations" only
+// exists on Oracle's demo instances, so set this to a business unit in your own instance.
+configurable string businessUnit = ?;
+
 public function main() returns error? {
     erp:Client erpClient = check new ({auth: {username, password}}, serviceUrl);
 
@@ -45,7 +49,7 @@ public function main() returns error? {
         fileName: "APInvoiceImport.zip",
         documentAccount: "fin$/payables$/import$",
         jobName: "oracle/apps/ess/financials/payables/invoices/transactions,APXIIMPT",
-        parameterList: "#NULL,Vision Operations,#NULL,#NULL,#NULL,#NULL,#NULL,INVOICE GATEWAY,#NULL,#NULL,#NULL,1,#NULL",
+        parameterList: string `#NULL,${businessUnit},#NULL,#NULL,#NULL,#NULL,#NULL,INVOICE GATEWAY,#NULL,#NULL,#NULL,1,#NULL`,
         notificationCode: "10",
         jobOptions: "InterfaceDetails=1,ImportOption=Y,PurgeOption=Y,ExtractFileType=ALL"
     };

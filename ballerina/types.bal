@@ -14,7 +14,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerinax/oraclefusion.erp.integrations.oas;
+import oraclefusion.erp.integrations.oas;
 
 # Provides a set of configurations for controlling the behaviours when communicating with a remote HTTP endpoint.
 public type ConnectionConfig oas:ConnectionConfig;

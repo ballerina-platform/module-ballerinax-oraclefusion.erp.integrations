@@ -20,13 +20,6 @@
 import ballerina/data.jsondata;
 import ballerina/http;
 
-# OAuth2 Client Credentials Grant Configs
-public type OAuth2ClientCredentialsGrantConfig record {|
-    *http:OAuth2ClientCredentialsGrantConfig;
-    # Token URL
-    string tokenUrl = "https://idcs-tenant.identity.oraclecloud.com/oauth2/v1/token";
-|};
-
 public type ESSJobStatusResponse record {
     int count?;
     boolean hasMore?;
@@ -151,7 +144,7 @@ public type ErpIntegrationRequest UploadFileToUCMRequest|ImportBulkDataRequest|S
 @display {label: "Connection Config"}
 public type ConnectionConfig record {|
     # Configurations related to client authentication
-    OAuth2ClientCredentialsGrantConfig|http:CredentialsConfig auth;
+    http:OAuth2ClientCredentialsGrantConfig|http:CredentialsConfig auth;
     # The HTTP version understood by the client
     http:HttpVersion httpVersion = http:HTTP_2_0;
     # Configurations related to HTTP/1.x protocol

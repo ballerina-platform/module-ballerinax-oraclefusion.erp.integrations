@@ -117,6 +117,43 @@ every regeneration**.
       If this patch is lost, three mock tests fail with `Unsupported OperationName: ''` instead of
       passing silently and breaking only in production.
 
+2. **`modules/oas/types.bal` — delete the unused `OAuth2ClientCredentialsGrantConfig` record.**
+    - Generated:
+      ```ballerina
+      # OAuth2 Client Credentials Grant Configs
+      public type OAuth2ClientCredentialsGrantConfig record {|
+          *http:OAuth2ClientCredentialsGrantConfig;
+          # Token URL
+          string tokenUrl = "";
+      |};
+      ```
+    - Patched: removed entirely, leaving a comment in its place.
+    - Reason: nothing references it. `ConnectionConfig.auth` is generated as
+      `http:OAuth2ClientCredentialsGrantConfig|http:CredentialsConfig`, using the `http` type
+      directly, so the local record is dead public API that would otherwise show up in the module's
+      API documentation.
+    - Why the generator emits it: the record is produced from the mere presence of the `oauth2`
+      `clientCredentials` scheme, regardless of what `tokenUrl` contains. It cannot be suppressed
+      from the specification. With a placeholder `tokenUrl` the generator *does* reference the local
+      record (to carry the default); with `tokenUrl: ""` — see the note below — it references the
+      `http` type instead and the local record is left orphaned.
+    - **No regression guard exists.** Unlike patch 1, nothing fails if this patch is lost: the
+      regenerated record is unused, so it compiles and every test still passes. It has to be
+      re-deleted by hand, and the only symptom of forgetting is a stray public type in the API docs.
+
+### Why the specification sets `tokenUrl: ""`
+
+The `oauth2` scheme in the source specification sets an empty `tokenUrl`, because the token endpoint
+is an instance-specific IDCS host and any default would be a non-working placeholder. Given an empty
+`tokenUrl` the generator resolves `auth` to `http:OAuth2ClientCredentialsGrantConfig`, on which
+`tokenUrl` is a **required** field — so omitting it is a compile error rather than a runtime failure
+against a host that does not exist.
+
+Neither alternative works: removing `tokenUrl` from the specification makes `bal openapi` reject it
+outright (`attribute components.securitySchemes.oauth2.tokenUrl is missing`), and leaving a
+placeholder URL makes the generator inject it as a **default** on the local record, which then has
+to be stripped by hand after every regeneration.
+
 ## Hand-written wrapper layer
 
 These are code-level additions on top of the generated client, not sanitations of the

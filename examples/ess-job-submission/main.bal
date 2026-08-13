@@ -31,6 +31,10 @@ configurable string password = ?;
 // Path to the data file to upload. Any file type works here; this example uses a zip.
 configurable string filePath = ?;
 
+// Business unit that owns the imported invoices. Tenant-specific — "Vision Operations" only
+// exists on Oracle's demo instances, so set this to a business unit in your own instance.
+configurable string businessUnit = ?;
+
 public function main() returns error? {
     erp:Client erpClient = check new ({auth: {username, password}}, serviceUrl);
 
@@ -58,7 +62,7 @@ public function main() returns error? {
         jobPackageName: "oracle/apps/ess/financials/payables/invoices/transactions",
         jobDefName: "APXIIMPT",
         documentId,
-        essParameters: "#NULL,Vision Operations,#NULL,#NULL,#NULL,#NULL,#NULL,INVOICE GATEWAY"
+        essParameters: string `#NULL,${businessUnit},#NULL,#NULL,#NULL,#NULL,#NULL,INVOICE GATEWAY`
     };
     erp:ErpIntegrationResponse jobResult = check erpClient->submitESSJobRequest(jobRequest);
 

@@ -22,6 +22,8 @@ username = "<your-fusion-username>"
 password = "<your-fusion-password>"
 # Path to the FBDI zip file to import — the example reads it and base64-encodes it for you
 filePath = "./APInvoiceImport.zip"
+# Business unit that owns the invoices - tenant-specific, must exist in your instance
+businessUnit = "<your-business-unit>"
 ```
 
 Generate the CSV files from the Oracle FBDI template for AP invoices, zip them, and point `filePath` at the resulting archive.

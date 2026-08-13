@@ -12,7 +12,7 @@ The `ballerinax/oraclefusion.erp.integrations` package provides APIs to connect 
 
 The ERP Integrations base URL is instance-specific and takes the form:
 
-```
+```text
 https://{fusionHost}/fscmRestApi/resources/{apiVersion}
 ```
 
@@ -47,8 +47,6 @@ final erp:Client erpClient = check new ({
     }
 }, serviceUrl);
 ```
-
-> Always set `tokenUrl` explicitly. The generated type carries a placeholder default that will not resolve against your instance.
 
 Ask your Fusion administrator which scheme the instance is configured for — some pods disable Basic auth for integration users.
 

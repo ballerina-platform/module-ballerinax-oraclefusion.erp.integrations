@@ -305,8 +305,8 @@ components:
     oauth2:
       type: oauth2
       description: |
-        OAuth2 client credentials against the instance's Oracle Identity Cloud Service (IDCS) token endpoint. The token URL is instance-specific - substitute your own IDCS host and the scope registered for the ERP Integrations resource.
+        OAuth2 client credentials against the instance's Oracle Identity Cloud Service (IDCS) token endpoint. The token URL is entirely instance-specific, so it is deliberately left empty here and must be supplied by the caller - any default would be a non-working placeholder. OpenAPI requires the attribute to be present, so it cannot simply be omitted.
       flows:
         clientCredentials:
-          tokenUrl: https://idcs-tenant.identity.oraclecloud.com/oauth2/v1/token
+          tokenUrl: ""
           scopes: {}

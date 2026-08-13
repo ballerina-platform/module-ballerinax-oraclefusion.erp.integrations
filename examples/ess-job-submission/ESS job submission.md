@@ -22,6 +22,8 @@ username = "<your-fusion-username>"
 password = "<your-fusion-password>"
 # Path to the file to upload — the example reads it and base64-encodes it for you
 filePath = "./APInvoiceImport.zip"
+# Business unit that owns the invoices - tenant-specific, must exist in your instance
+businessUnit = "<your-business-unit>"
 ```
 
 ## Run the example
