@@ -5,7 +5,7 @@ name = "oraclefusion.erp.integrations"
 version = "@toml.version@"
 license = ["Apache-2.0"]
 authors = ["Ballerina"]
-keywords = ["Type/Connector", "Vendor/Oracle", "Cost/Paid", "Area/ERP", "Oracle Fusion", "ERP", "FBDI", "ESS", "Finance & Accounting/ERP"]
+keywords = ["Type/Connector", "Vendor/Oracle", "Area/ERP", "Oracle Fusion", "ERP", "FBDI", "ESS"]
 icon = "icon.png"
 repository = "https://github.com/ballerina-platform/module-ballerinax-oraclefusion.erp.integrations"
 
