@@ -1,6 +1,6 @@
 _Author_:  DimuthuMadushan \
 _Created_: 2026-08-12 \
-_Updated_: 2026-08-13 \
+_Updated_: 2026-08-14 \
 _Edition_: Swan Lake
 
 # Sanitation for OpenAPI specification
@@ -56,14 +56,6 @@ These changes are done in order to improve the overall usability, and as workaro
     - Updated: `x-ballerina-name: essParameters`
     - Reason: `eSSParameters` reads as a typo at the call site. `essParameters` matches the
       acronym-lowering convention used elsewhere in the connector.
-
-<!-- auto-generated -->
-7. **Add a `requestBody` description for `POST /erpintegrations`**: Applied to the source
-   specification (`docs/spec/openapi.yaml`), not only the aligned output.
-    - Original: no `description` on the request body
-    - Updated: describes the multiplexed payload and how `OperationName` selects the shape
-    - Reason: Without it, `bal build` emits `WARNING: undocumented parameter 'payload'` for the
-      generated `invokeErpIntegrationOperation` remote method.
 
 ## OpenAPI cli command
 
@@ -182,7 +174,22 @@ multiplexed endpoint whose behaviour is selected by an `OperationName` discrimin
    builds `ESSJobStatusRF;requestId=${requestId}` internally.
     - Reason: The finder syntax is an Oracle query convention the caller would otherwise have to
       construct by hand from a value the connector already returned.
-4. **Re-export the response and configuration types**: `ConnectionConfig`, `ClientHttp1Settings`,
-   `ProxyConfig`, `ErpIntegrationResponse`, `ESSJobStatusItem` and `ESSJobStatusResponse` are
-   aliases of their `oas` counterparts.
-    - Reason: Consumers import a single module and never reference `oas` directly.
+4. **Redeclare the response and configuration types in full**: `ConnectionConfig`,
+   `ClientHttp1Settings`, `ProxyConfig`, `ErpIntegrationResponse`, `ESSJobStatusItem` and
+   `ESSJobStatusResponse` are written out as complete record definitions in `ballerina/types.bal`,
+   structurally identical to their `oas` counterparts.
+    - Reason: Consumers import a single module and never reference `oas` directly. They were
+      originally type aliases (`public type ConnectionConfig oas:ConnectionConfig;`), but the `oas`
+      submodule is not exposed on Ballerina Central, so the API documentation rendered the aliases
+      as links to a module that is not published — with no field list for the reader. Redeclaring
+      the records makes the fields and their documentation appear in the connector's own API docs.
+    - Structural typing keeps the two layers assignable, so `client.bal` still passes a root
+      `ConnectionConfig` to `oas:Client` and returns an `oas:ErpIntegrationResponse` as the root
+      type without conversion.
+    - The redeclarations carry no `@jsondata:Name` annotations, matching the existing request
+      records: the `oas` layer stays the single source of truth for wire-format field names, and
+      binding always happens against the `oas` types inside the generated client.
+    - **These definitions must be kept in sync by hand after every regeneration.** If a field is
+      added, removed or retyped in `modules/oas/types.bal`, mirror it here — a drift in
+      `ConnectionConfig` breaks the `oas:Client` init at compile time, but a drift in a response
+      record only drops a field silently from the public type.
