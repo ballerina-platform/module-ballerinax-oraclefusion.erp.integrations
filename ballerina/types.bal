@@ -83,7 +83,7 @@ public type ErpIntegrationResponse record {
     string operationName?;
     # Identifier of the UCM document the operation uploaded or acted on
     string? documentId?;
-    # Identifier of the submitted ESS job request, returned by `importBulkData` and `submitESSJobRequest`
+    # Identifier of the submitted ESS job request, returned by `importBulkData` and `submitEssJobRequest`
     string reqstId?;
     # Identifier of the ERP integration request
     string rqstId?;
@@ -100,7 +100,7 @@ public type ErpIntegrationResponse record {
 };
 
 # The status of one ESS job request.
-public type ESSJobStatusItem record {
+public type EssJobStatusItem record {
     # Name of the operation that submitted the job
     string operationName?;
     # Identifier of the ESS job request
@@ -112,9 +112,9 @@ public type ESSJobStatusItem record {
 };
 
 # A collection of ESS job status results.
-public type ESSJobStatusResponse record {
+public type EssJobStatusResponse record {
     # The matching job status entries
-    ESSJobStatusItem[] items?;
+    EssJobStatusItem[] items?;
     # Number of entries in `items`
     int count?;
     # Whether more entries are available beyond the ones returned
@@ -122,7 +122,7 @@ public type ESSJobStatusResponse record {
 };
 
 # Uploads a file to WebCenter Content (UCM) without submitting a job.
-public type UploadFileToUCMRequest record {|
+public type UploadFileToUcmRequest record {|
     # Base64-encoded content of the file to upload
     string documentContent;
     # UCM account the document is filed under, e.g. `fin$/payables$/import$`
@@ -158,7 +158,7 @@ public type ImportBulkDataRequest record {|
 |};
 
 # Submits an ESS job for a document already present in UCM.
-public type SubmitESSJobRequest record {|
+public type SubmitEssJobRequest record {|
     # Fully qualified ESS job package path
     string jobPackageName;
     # ESS job definition name, e.g. `APXIIMPT`

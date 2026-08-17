@@ -23,7 +23,7 @@ service / on ep0 {
     #
     # + finder - Use ESSJobStatusRF;requestId={ReqstId} to check the status of a previously submitted request.
     # + return - Job status result
-    resource function get erpintegrations(string finder) returns ESSJobStatusResponse {
+    resource function get erpintegrations(string finder) returns EssJobStatusResponse {
         return {
             count: 1,
             hasMore: false,

@@ -44,14 +44,14 @@ const string SAMPLE_DOCUMENT_CONTENT = "UEsDBBQAAAAIABCInEgIHJSKCgAAAAgAAAAIAAAA
 @test:Config {
     groups: ["live_tests", "mock_tests"]
 }
-isolated function testUploadFileToUCM() returns error? {
-    UploadFileToUCMRequest payload = {
+isolated function testUploadFileToUcm() returns error? {
+    UploadFileToUcmRequest payload = {
         documentContent: SAMPLE_DOCUMENT_CONTENT,
         documentAccount: "fin$/payables$/import$",
         contentType: "zip",
         fileName: "APTEST_0310.zip"
     };
-    ErpIntegrationResponse response = check erpClient->uploadFileToUCM(payload);
+    ErpIntegrationResponse response = check erpClient->uploadFileToUcm(payload);
     test:assertTrue(response?.documentId !is ());
     test:assertEquals(response?.operationName, "uploadFileToUCM");
 }
@@ -78,14 +78,14 @@ isolated function testImportBulkData() returns error? {
 @test:Config {
     groups: ["live_tests", "mock_tests"]
 }
-isolated function testSubmitESSJobRequest() returns error? {
-    SubmitESSJobRequest payload = {
+isolated function testSubmitEssJobRequest() returns error? {
+    SubmitEssJobRequest payload = {
         jobPackageName: "oracle/apps/ess/financials/payables/invoices/transactions",
         jobDefName: "APXIIMPT",
         documentId: "UCMFA00123456",
         essParameters: "#NULL,Vision Operations,#NULL,#NULL,#NULL,#NULL,#NULL,INVOICE GATEWAY"
     };
-    ErpIntegrationResponse response = check erpClient->submitESSJobRequest(payload);
+    ErpIntegrationResponse response = check erpClient->submitEssJobRequest(payload);
     test:assertTrue(response?.reqstId !is ());
     test:assertEquals(response?.operationName, "submitESSJobRequest");
 }
@@ -93,11 +93,11 @@ isolated function testSubmitESSJobRequest() returns error? {
 @test:Config {
     groups: ["live_tests", "mock_tests"]
 }
-isolated function testGetESSJobStatus() returns error? {
-    ESSJobStatusResponse response = check erpClient->getESSJobStatus("14557");
-    ESSJobStatusItem[]? items = response?.items;
+isolated function testGetEssJobStatus() returns error? {
+    EssJobStatusResponse response = check erpClient->getEssJobStatus("14557");
+    EssJobStatusItem[]? items = response?.items;
     test:assertTrue(items !is ());
-    if items is ESSJobStatusItem[] {
+    if items is EssJobStatusItem[] {
         test:assertTrue(items.length() > 0);
         test:assertTrue(items[0]?.requestStatus !is ());
     }

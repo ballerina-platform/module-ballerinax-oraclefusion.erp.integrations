@@ -159,24 +159,27 @@ specification — they are listed here so the two layers are not confused during
 The root module wraps `oas:Client` and exists because `POST /erpintegrations` is a single
 multiplexed endpoint whose behaviour is selected by an `OperationName` discriminator field:
 
-1. **Split the multiplexed operation into four remote methods**: `uploadFileToUCM`,
-   `importBulkData`, `submitESSJobRequest` and `getESSJobStatus`, in place of the generated
+1. **Split the multiplexed operation into four remote methods**: `uploadFileToUcm`,
+   `importBulkData`, `submitEssJobRequest` and `getEssJobStatus`, in place of the generated
    `invokeErpIntegrationOperation`.
     - Reason: The discriminator is an artifact of the API's transport shape, not a decision the
       caller should have to make. Each wrapper method sets `OperationName` itself.
+    - The acronyms in Oracle's operation names (`UCM`, `ESS`) are lowered to `Ucm` and `Ess` in the
+      Ballerina names, per the Ballerina naming convention that acronyms are cased as ordinary
+      words. The wire values passed as `OperationName` keep Oracle's original spelling.
 2. **Redefine the three request records without `operationName`**: the root
-   `UploadFileToUCMRequest`, `ImportBulkDataRequest` and `SubmitESSJobRequest` omit the field,
+   `UploadFileToUcmRequest`, `ImportBulkDataRequest` and `SubmitEssJobRequest` omit the field,
    which is applied via a spread (`{...payload, operationName: "..."}`) when delegating.
     - Reason: The field is a required singleton-typed constant, so callers were forced to restate a
       value the method name already implies. The generated records remain the source of truth for
       field names and `@jsondata:Name` wire mappings.
-3. **Take an ESS request id instead of a finder expression**: `getESSJobStatus(string requestId)`
+3. **Take an ESS request id instead of a finder expression**: `getEssJobStatus(string requestId)`
    builds `ESSJobStatusRF;requestId=${requestId}` internally.
     - Reason: The finder syntax is an Oracle query convention the caller would otherwise have to
       construct by hand from a value the connector already returned.
 4. **Redeclare the response and configuration types in full**: `ConnectionConfig`,
-   `ClientHttp1Settings`, `ProxyConfig`, `ErpIntegrationResponse`, `ESSJobStatusItem` and
-   `ESSJobStatusResponse` are written out as complete record definitions in `ballerina/types.bal`,
+   `ClientHttp1Settings`, `ProxyConfig`, `ErpIntegrationResponse`, `EssJobStatusItem` and
+   `EssJobStatusResponse` are written out as complete record definitions in `ballerina/types.bal`,
    structurally identical to their `oas` counterparts.
     - Reason: Consumers import a single module and never reference `oas` directly. They were
       originally type aliases (`public type ConnectionConfig oas:ConnectionConfig;`), but the `oas`

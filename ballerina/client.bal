@@ -35,7 +35,7 @@ public isolated client class Client {
     # + payload - The file to upload and the UCM account to file it under
     # + headers - Headers to be sent with the request
     # + return - The upload result, carrying the assigned `documentId`, or an error
-    remote isolated function uploadFileToUCM(UploadFileToUCMRequest payload, map<string|string[]> headers = {})
+    remote isolated function uploadFileToUcm(UploadFileToUcmRequest payload, map<string|string[]> headers = {})
         returns ErpIntegrationResponse|error {
         oas:UploadFileToUCMRequest request = {...payload, operationName: "uploadFileToUCM"};
         return self.oasClient->invokeErpIntegrationOperation(request, headers);
@@ -43,7 +43,7 @@ public isolated client class Client {
 
     # Uploads an FBDI file to UCM and submits the matching import job in a single call.
     #
-    # Prefer this over `submitESSJobRequest` for Supply Chain Planning data, as it is the
+    # Prefer this over `submitEssJobRequest` for Supply Chain Planning data, as it is the
     # encryption-capable path.
     #
     # + payload - The FBDI file to import and the ESS job that should process it
@@ -60,7 +60,7 @@ public isolated client class Client {
     # + payload - The ESS job to submit and the UCM document it should process
     # + headers - Headers to be sent with the request
     # + return - The submission result, carrying the submitted `reqstId`, or an error
-    remote isolated function submitESSJobRequest(SubmitESSJobRequest payload, map<string|string[]> headers = {})
+    remote isolated function submitEssJobRequest(SubmitEssJobRequest payload, map<string|string[]> headers = {})
         returns ErpIntegrationResponse|error {
         oas:SubmitESSJobRequest request = {...payload, operationName: "submitESSJobRequest"};
         return self.oasClient->invokeErpIntegrationOperation(request, headers);
@@ -71,8 +71,8 @@ public isolated client class Client {
     # + requestId - The `reqstId` returned when the job was submitted
     # + headers - Headers to be sent with the request
     # + return - The job status result, or an error
-    remote isolated function getESSJobStatus(string requestId, map<string|string[]> headers = {})
-        returns ESSJobStatusResponse|error {
+    remote isolated function getEssJobStatus(string requestId, map<string|string[]> headers = {})
+        returns EssJobStatusResponse|error {
         return self.oasClient->getESSJobStatus(headers, {
             finder: string `ESSJobStatusRF;requestId=${requestId}`
         });
