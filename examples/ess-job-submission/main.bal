@@ -43,13 +43,13 @@ public function main() returns error? {
     string documentContent = fileBytes.toBase64();
 
     // Step 1: Upload the file to WebCenter Content (UCM).
-    erp:UploadFileToUCMRequest uploadRequest = {
+    erp:UploadFileToUcmRequest uploadRequest = {
         documentContent,
         documentAccount: "fin$/payables$/import$",
         contentType: "zip",
         fileName: "APInvoiceImport.zip"
     };
-    erp:ErpIntegrationResponse uploadResult = check erpClient->uploadFileToUCM(uploadRequest);
+    erp:ErpIntegrationResponse uploadResult = check erpClient->uploadFileToUcm(uploadRequest);
 
     string? documentId = uploadResult?.documentId;
     if documentId is () {
@@ -58,13 +58,13 @@ public function main() returns error? {
     io:println("Uploaded document id: ", documentId);
 
     // Step 2: Submit the ESS job that consumes the uploaded document.
-    erp:SubmitESSJobRequest jobRequest = {
+    erp:SubmitEssJobRequest jobRequest = {
         jobPackageName: "oracle/apps/ess/financials/payables/invoices/transactions",
         jobDefName: "APXIIMPT",
         documentId,
         essParameters: string `#NULL,${businessUnit},#NULL,#NULL,#NULL,#NULL,#NULL,INVOICE GATEWAY`
     };
-    erp:ErpIntegrationResponse jobResult = check erpClient->submitESSJobRequest(jobRequest);
+    erp:ErpIntegrationResponse jobResult = check erpClient->submitEssJobRequest(jobRequest);
 
     string? requestId = jobResult?.reqstId;
     if requestId is () {
@@ -73,9 +73,9 @@ public function main() returns error? {
     io:println("Submitted ESS request id: ", requestId);
 
     // Step 3: Check the status of the submitted job.
-    erp:ESSJobStatusResponse jobStatus = check erpClient->getESSJobStatus(requestId);
+    erp:EssJobStatusResponse jobStatus = check erpClient->getEssJobStatus(requestId);
 
-    erp:ESSJobStatusItem[]? items = jobStatus?.items;
+    erp:EssJobStatusItem[]? items = jobStatus?.items;
     if items is () || items.length() == 0 {
         io:println("No status returned for request ", requestId, " yet — retry shortly.");
         return;

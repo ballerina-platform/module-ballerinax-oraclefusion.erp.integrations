@@ -2,7 +2,7 @@
 
 This example uploads a data file to Oracle WebCenter Content (UCM) and then submits an Enterprise Scheduler Service (ESS) job against it as two separate steps.
 
-`uploadFileToUCM` returns a `DocumentId`, which is passed to `submitESSJobRequest` to run the `APXIIMPT` job over the uploaded document. The status of the resulting request is then retrieved through the `ESSJobStatusRF` finder.
+`uploadFileToUcm` returns a `DocumentId`, which is passed to `submitEssJobRequest` to run the `APXIIMPT` job over the uploaded document. The status of the resulting request is then retrieved through the `ESSJobStatusRF` finder.
 
 Use this flow instead of `importBulkData` when the upload and the job submission need to be decoupled — for example when the same uploaded document is consumed by more than one job, or when the job runs after a separate approval step.
 

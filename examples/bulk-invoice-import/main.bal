@@ -63,9 +63,9 @@ public function main() returns error? {
     io:println("Submitted ESS request id: ", requestId);
 
     // Step 2: Check the status of the import job.
-    erp:ESSJobStatusResponse jobStatus = check erpClient->getESSJobStatus(requestId);
+    erp:EssJobStatusResponse jobStatus = check erpClient->getEssJobStatus(requestId);
 
-    erp:ESSJobStatusItem[]? items = jobStatus?.items;
+    erp:EssJobStatusItem[]? items = jobStatus?.items;
     if items is () || items.length() == 0 {
         io:println("No status returned for request ", requestId, " yet — retry shortly.");
         return;

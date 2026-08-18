@@ -4,7 +4,7 @@
 
 The ERP Integrations REST service (the `erpintegrations` resource) is the entry point for moving bulk data into Fusion. It uploads File-Based Data Import (FBDI) files to Oracle WebCenter Content (UCM), submits the Enterprise Scheduler Service (ESS) jobs that import them, and reports the status of those jobs.
 
-The `ballerinax/oraclefusion.erp.integrations` package provides APIs to connect and interact with the ERP Integrations REST service endpoints of Oracle Fusion Cloud ERP release `11.13.18.05`. It supports the `uploadFileToUCM`, `importBulkData`, and `submitESSJobRequest` operations, together with ESS job status retrieval.
+The `ballerinax/oraclefusion.erp.integrations` package provides APIs to connect and interact with the ERP Integrations REST service endpoints of Oracle Fusion Cloud ERP release `11.13.18.05`. It supports the `uploadFileToUcm`, `importBulkData`, and `submitEssJobRequest` operations, together with ESS job status retrieval.
 
 ## Setup guide
 
@@ -87,7 +87,7 @@ Now, utilize the available connector operations. The following snippet checks th
 
 ```ballerina
 public function main() returns error? {
-    erp:ESSJobStatusResponse jobStatus = check erpClient->getESSJobStatus("14557");
+    erp:EssJobStatusResponse jobStatus = check erpClient->getEssJobStatus("14557");
     io:println(jobStatus);
 }
 ```

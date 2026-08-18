@@ -21,10 +21,10 @@ You can run the tests in either of these environments, and each has its own comp
 
 The suite covers every operation exposed by the connector:
 
-- `uploadFileToUCM` — uploads a file to WebCenter Content and asserts a document id is returned.
+- `uploadFileToUcm` — uploads a file to WebCenter Content and asserts a document id is returned.
 - `importBulkData` — uploads and submits an import job in one call, asserting an ESS request id is returned.
-- `submitESSJobRequest` — submits an ESS job for a previously uploaded document.
-- `getESSJobStatus` — retrieves the status of a submitted request through the `ESSJobStatusRF` finder.
+- `submitEssJobRequest` — submits an ESS job for a previously uploaded document.
+- `getEssJobStatus` — retrieves the status of a submitted request through the `ESSJobStatusRF` finder.
 
 Each of the first three maps onto the API's single multiplexed `POST /erpintegrations` endpoint; the connector sets the `OperationName` discriminator, so the tests call the operations directly.
 
