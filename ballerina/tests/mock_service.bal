@@ -23,16 +23,16 @@ service / on ep0 {
     #
     # + finder - Use ESSJobStatusRF;requestId={ReqstId} to check the status of a previously submitted request.
     # + return - Job status result
-    resource function get erpintegrations(string finder) returns EssJobStatusResponse {
+    resource function get erpintegrations(string finder) returns json {
         return {
             count: 1,
             hasMore: false,
             items: [
                 {
-                    operationName: "submitESSJobRequest",
-                    documentId: "UCMFA00123456",
-                    reqstId: "300000012345678",
-                    requestStatus: "SUCCEEDED"
+                    OperationName: "submitESSJobRequest",
+                    DocumentId: "UCMFA00123456",
+                    ReqstId: "300000012345678",
+                    RequestStatus: "SUCCEEDED"
                 }
             ]
         };
@@ -44,37 +44,37 @@ service / on ep0 {
     # + return - returns can be any of following types
     # http:Ok (Operation result)
     # http:BadRequest (Invalid request)
-    resource function post erpintegrations(@http:Payload json payload) returns ErpIntegrationResponse|http:BadRequest {
+    resource function post erpintegrations(@http:Payload json payload) returns json|http:BadRequest {
         string operation = resolveOperationName(payload);
         match operation {
             "uploadFileToUCM" => {
                 return {
-                    operationName: "uploadFileToUCM",
-                    documentId: "UCMFA00123456",
-                    fileName: "SupplierImportTemplate.zip",
-                    contentType: "zip",
-                    documentAccount: "fin$/supplierInvoice$/import$"
+                    OperationName: "uploadFileToUCM",
+                    DocumentId: "UCMFA00123456",
+                    FileName: "SupplierImportTemplate.zip",
+                    ContentType: "zip",
+                    DocumentAccount: "fin$/supplierInvoice$/import$"
                 };
             }
             "importBulkData" => {
                 return {
-                    operationName: "importBulkData",
-                    documentId: "UCMFA00123457",
-                    fileName: "SupplierImportTemplate.zip",
-                    contentType: "zip",
-                    documentAccount: "fin$/supplierInvoice$/import$",
-                    jobName: "oracle/apps/ess/financials/payables/invoices/transactions,APXIIMPT",
-                    reqstId: "300000012345679",
-                    requestStatus: "READY"
+                    OperationName: "importBulkData",
+                    DocumentId: "UCMFA00123457",
+                    FileName: "SupplierImportTemplate.zip",
+                    ContentType: "zip",
+                    DocumentAccount: "fin$/supplierInvoice$/import$",
+                    JobName: "oracle/apps/ess/financials/payables/invoices/transactions,APXIIMPT",
+                    ReqstId: "300000012345679",
+                    RequestStatus: "READY"
                 };
             }
             "submitESSJobRequest" => {
                 return {
-                    operationName: "submitESSJobRequest",
-                    documentId: "UCMFA00123456",
-                    reqstId: "300000012345680",
-                    rqstId: "300000012345680",
-                    requestStatus: "WAIT"
+                    OperationName: "submitESSJobRequest",
+                    DocumentId: "UCMFA00123456",
+                    ReqstId: "300000012345680",
+                    RqstId: "300000012345680",
+                    RequestStatus: "WAIT"
                 };
             }
         }
